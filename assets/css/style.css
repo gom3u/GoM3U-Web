@@ -1,0 +1,343 @@
+/*
+ * assets/css/style.css
+ *
+ * GitHub Cloud Manager - Stylesheet
+ * -------------------------------------
+ * A dark, GitHub-inspired theme layered on top of Bootstrap 5's built-in
+ * dark mode (data-bs-theme="dark"). Provides:
+ *   - CSS custom properties for consistent surface/border colors
+ *   - The responsive app shell (topbar + collapsible sidebar + main area)
+ *   - Repo card / file table / breadcrumb / login styling
+ *   - CodeMirror editor embed styling
+ *   - Toast, badge, and small utility touches
+ */
+
+:root {
+  --gcm-bg: #0d1117;
+  --gcm-surface: #161b22;
+  --gcm-surface-raised: #1c2128;
+  --gcm-border: #30363d;
+  --gcm-border-subtle: #21262d;
+  --gcm-text: #e6edf3;
+  --gcm-text-muted: #8b949e;
+  --gcm-accent: #2f81f7;
+  --gcm-accent-hover: #4493f8;
+  --gcm-danger: #f85149;
+  --gcm-warning: #d29922;
+  --gcm-success: #3fb950;
+  --gcm-radius: 0.75rem;
+  --gcm-topbar-height: 60px;
+  --gcm-sidebar-width: 250px;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--gcm-bg);
+  color: var(--gcm-text);
+}
+
+a {
+  color: var(--gcm-accent);
+}
+a:hover {
+  color: var(--gcm-accent-hover);
+}
+
+code {
+  color: #ffa657;
+}
+
+/* ---------------------------------------------------------------------
+   Login page
+   --------------------------------------------------------------------- */
+.login-body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(47, 129, 247, 0.15), transparent 40%),
+    radial-gradient(circle at 80% 60%, rgba(63, 185, 80, 0.10), transparent 45%),
+    var(--gcm-bg);
+}
+
+.login-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--gcm-surface);
+  border: 1px solid var(--gcm-border);
+  font-size: 2rem;
+  color: var(--gcm-text);
+}
+
+.gcm-card {
+  background-color: var(--gcm-surface);
+  border: 1px solid var(--gcm-border);
+  border-radius: var(--gcm-radius);
+}
+
+/* ---------------------------------------------------------------------
+   App shell: topbar + sidebar + main content
+   --------------------------------------------------------------------- */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-topbar {
+  height: var(--gcm-topbar-height);
+  min-height: var(--gcm-topbar-height);
+  background-color: var(--gcm-surface);
+  border-bottom: 1px solid var(--gcm-border);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+
+.app-body {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - var(--gcm-topbar-height));
+  position: relative;
+}
+
+.app-sidebar {
+  width: var(--gcm-sidebar-width);
+  flex-shrink: 0;
+  background-color: var(--gcm-surface);
+  border-right: 1px solid var(--gcm-border);
+  position: sticky;
+  top: var(--gcm-topbar-height);
+  height: calc(100vh - var(--gcm-topbar-height));
+  overflow-y: auto;
+}
+
+.app-sidebar .nav-link {
+  color: var(--gcm-text-muted);
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.92rem;
+  text-align: left;
+}
+
+.app-sidebar .nav-link:hover {
+  background-color: var(--gcm-surface-raised);
+  color: var(--gcm-text);
+}
+
+.app-sidebar .nav-link.active {
+  background-color: rgba(47, 129, 247, 0.15);
+  color: var(--gcm-accent-hover);
+  font-weight: 600;
+}
+
+.app-sidebar button.nav-link {
+  width: 100%;
+  background: none;
+  border: none;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1035;
+}
+
+.btn-icon {
+  background: transparent;
+  border: none;
+  color: var(--gcm-text);
+}
+.btn-icon:hover {
+  color: var(--gcm-accent-hover);
+}
+
+/* Mobile: sidebar becomes an off-canvas drawer */
+@media (max-width: 991.98px) {
+  .app-sidebar {
+    position: fixed;
+    top: var(--gcm-topbar-height);
+    left: 0;
+    height: calc(100vh - var(--gcm-topbar-height));
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 1040;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+  }
+  .app-sidebar.show {
+    transform: translateX(0);
+  }
+  .sidebar-backdrop.show {
+    display: block;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Profile & repo cards
+   --------------------------------------------------------------------- */
+.profile-avatar {
+  border: 3px solid var(--gcm-border);
+}
+
+.repo-card {
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  position: relative;
+}
+.repo-card:hover {
+  border-color: var(--gcm-accent);
+  transform: translateY(-2px);
+}
+.repo-card a.stretched-link-title::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.repo-card .btn,
+.repo-card a:not(.stretched-link-title) {
+  position: relative;
+  z-index: 2;
+}
+
+.lang-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #8b949e;
+}
+.lang-dot[data-lang="JavaScript"] { background-color: #f1e05a; }
+.lang-dot[data-lang="TypeScript"] { background-color: #3178c6; }
+.lang-dot[data-lang="Python"] { background-color: #3572A5; }
+.lang-dot[data-lang="PHP"] { background-color: #4F5D95; }
+.lang-dot[data-lang="Java"] { background-color: #b07219; }
+.lang-dot[data-lang="HTML"] { background-color: #e34c26; }
+.lang-dot[data-lang="CSS"] { background-color: #563d7c; }
+.lang-dot[data-lang="C++"] { background-color: #f34b7d; }
+.lang-dot[data-lang="C"] { background-color: #555555; }
+.lang-dot[data-lang="C#"] { background-color: #178600; }
+.lang-dot[data-lang="Go"] { background-color: #00ADD8; }
+.lang-dot[data-lang="Rust"] { background-color: #dea584; }
+.lang-dot[data-lang="Ruby"] { background-color: #701516; }
+.lang-dot[data-lang="Shell"] { background-color: #89e051; }
+.lang-dot[data-lang="Vue"] { background-color: #41b883; }
+.lang-dot[data-lang="Swift"] { background-color: #F05138; }
+.lang-dot[data-lang="Kotlin"] { background-color: #A97BFF; }
+
+/* ---------------------------------------------------------------------
+   Breadcrumbs & file explorer table
+   --------------------------------------------------------------------- */
+.gcm-breadcrumb {
+  background-color: var(--gcm-surface);
+  border: 1px solid var(--gcm-border);
+  border-radius: var(--gcm-radius);
+  padding: 0.65rem 1rem;
+}
+.gcm-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+  color: var(--gcm-text-muted);
+}
+.gcm-breadcrumb a {
+  text-decoration: none;
+}
+
+.gcm-file-table thead th {
+  border-bottom: 1px solid var(--gcm-border);
+  background-color: var(--gcm-surface-raised);
+}
+.gcm-file-table tbody tr {
+  border-bottom: 1px solid var(--gcm-border-subtle);
+}
+.gcm-file-table tbody tr:last-child {
+  border-bottom: none;
+}
+.gcm-file-table td, .gcm-file-table th {
+  padding: 0.65rem 0.9rem;
+}
+
+/* ---------------------------------------------------------------------
+   File editor (CodeMirror embed)
+   --------------------------------------------------------------------- */
+#fileEditor {
+  display: none; /* CodeMirror replaces the textarea visually */
+}
+.CodeMirror {
+  height: 65vh;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.9rem;
+  border-radius: 0 0 var(--gcm-radius) var(--gcm-radius);
+}
+
+/* ---------------------------------------------------------------------
+   Modals, forms, progress
+   --------------------------------------------------------------------- */
+.modal-content {
+  background-color: var(--gcm-surface);
+  border: 1px solid var(--gcm-border);
+}
+
+.progress {
+  background-color: var(--gcm-surface-raised);
+  height: 0.9rem;
+}
+
+/* ---------------------------------------------------------------------
+   Toasts
+   --------------------------------------------------------------------- */
+.toast-container {
+  z-index: 1080;
+}
+.gcm-toast {
+  background-color: var(--gcm-surface-raised);
+  border: 1px solid var(--gcm-border);
+  color: var(--gcm-text);
+  min-width: 280px;
+}
+.gcm-toast.gcm-toast-success { border-left: 4px solid var(--gcm-success); }
+.gcm-toast.gcm-toast-danger  { border-left: 4px solid var(--gcm-danger); }
+.gcm-toast.gcm-toast-info    { border-left: 4px solid var(--gcm-accent); }
+.gcm-toast.gcm-toast-warning { border-left: 4px solid var(--gcm-warning); }
+
+/* ---------------------------------------------------------------------
+   Loading / disabled states
+   --------------------------------------------------------------------- */
+.gcm-loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 17, 23, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.btn:disabled, .btn.disabled {
+  cursor: not-allowed;
+}
+
+/* Scrollbar polish (WebKit browsers) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--gcm-bg);
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--gcm-border);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--gcm-text-muted);
+}
